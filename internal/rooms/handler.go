@@ -2,7 +2,6 @@ package rooms
 
 import (
 	"encoding/json"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,16 +10,8 @@ import (
 	"github.com/natanfds/epic-dice/utils"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
 func Handler(c *gin.Context) {
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := WSUpgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		return
 	}
