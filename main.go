@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/natanfds/epic-dice/internal/ping"
+	"github.com/natanfds/epic-dice/internal/rooms"
 )
 
 func main() {
@@ -11,5 +12,11 @@ func main() {
 
 	router.GET("/ping", ping.Handler)
 
-	router.Run()
+	router.GET("/rooms", rooms.Handler)
+
+	err := router.Run(":8080")
+
+	if err != nil {
+		panic(err)
+	}
 }
