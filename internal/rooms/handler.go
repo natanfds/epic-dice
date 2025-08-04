@@ -7,6 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+
+	"github.com/natanfds/epic-dice/utils"
 )
 
 var upgrader = websocket.Upgrader{
@@ -35,10 +37,12 @@ func Handler(c *gin.Context) {
 		}
 
 		var msg MessageDTO
-		errMsg := json.Unmarshal(message, &msg)
+		_ = json.Unmarshal(message, &msg)
+		errMsg := utils.Validate.Struct(msg)
 
 		var cmd CommandDTO
-		errCmd := json.Unmarshal(message, &cmd)
+		_ = json.Unmarshal(message, &cmd)
+		errCmd := utils.Validate.Struct(cmd)
 
 		switch true {
 		case errMsg == nil:
