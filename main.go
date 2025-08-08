@@ -12,7 +12,7 @@ func main() {
 
 	router.GET("/ping", ping.Handler)
 
-	router.GET("/rooms", rooms.Handler)
+	router.GET("/room/*room", rooms.Handler)
 
 	err := router.Run(":8080")
 

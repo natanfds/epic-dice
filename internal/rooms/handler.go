@@ -2,19 +2,31 @@ package rooms
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
+	"github.com/natanfds/epic-dice/internal/rooms/ws"
 	"github.com/natanfds/epic-dice/utils"
 )
 
 func Handler(c *gin.Context) {
-	conn, err := WSUpgrader.Upgrade(c.Writer, c.Request, nil)
+	channelName := c.Params.ByName("room")
+	if channelName == "" {
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	conn, err := ws.Upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		return
 	}
+
+	wsClient := ws.NewClient(conn)
+	channel := ws.Hub.GetOrCreateChannel(channelName)
+	channel.AddClient(wsClient)
 
 	defer conn.Close()
 
@@ -41,6 +53,7 @@ func Handler(c *gin.Context) {
 		case errCmd == nil:
 			inputProcessor = NewCommandProcessor(cmd)
 		default:
+			conn.WriteMessage(websocket.TextMessage, []byte("Unprocessable input"))
 			return
 		}
 
