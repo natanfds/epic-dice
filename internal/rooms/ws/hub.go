@@ -28,6 +28,18 @@ func (h *hub) RemoveChannel(channelName string) {
 	delete(h.channels, channelName)
 }
 
+func (h *hub) ListActiveRooms() []string {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	var rooms []string
+	for room := range h.channels {
+		rooms = append(rooms, room)
+	}
+
+	return rooms
+}
+
 func NewHub() *hub {
 	return &hub{
 		channels: make(map[string]*Channel),
