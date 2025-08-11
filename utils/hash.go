@@ -11,7 +11,7 @@ type Hash struct {
 	aesGCM cipher.AEAD
 }
 
-func (h *Hash) Encrypt(data string) (string, error) {
+func (h *Hash) EncryptAES(data string) (string, error) {
 	byteData := []byte(data)
 
 	nonce := make([]byte, h.aesGCM.NonceSize())
@@ -23,7 +23,7 @@ func (h *Hash) Encrypt(data string) (string, error) {
 	return string(cipherText), nil
 }
 
-func (h *Hash) Decrypt(data string) (string, error) {
+func (h *Hash) DecryptAES(data string) (string, error) {
 	byteData := []byte(data)
 
 	nonceSize := h.aesGCM.NonceSize()
@@ -41,11 +41,10 @@ func (h *Hash) Decrypt(data string) (string, error) {
 	return string(plainText), nil
 }
 
-func (h *Hash) Validate(data string) error {
-	return nil
-}
-
 func NewHash(key string) (*Hash, error) {
+	if key == "" {
+		return &Hash{}, nil
+	}
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return nil, err
