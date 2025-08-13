@@ -6,15 +6,15 @@ type RoomRepository struct {
 	db *gorm.DB
 }
 
-func (r *RoomRepository) Create(dto CreateRoomDTO) error {
+func (r *RoomRepository) Create(dto RoomModel) error {
 	return r.db.Create(&dto).Error
 }
 
-func (r *RoomRepository) Update(dto UpdateRoomDTO) error {
+func (r *RoomRepository) Update(dto RoomModel) error {
 	return r.db.Save(&dto).Error
 }
 
-func (r *RoomRepository) Get(dto UpdateRoomDTO) ([]RoomModel, error) {
+func (r *RoomRepository) Get(dto RoomModel) ([]RoomModel, error) {
 	var results []RoomModel
 	err := r.db.Where(&dto).Find(&results).Error
 	return results, err

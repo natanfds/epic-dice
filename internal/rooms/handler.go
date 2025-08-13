@@ -81,7 +81,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	if err := h.repo.Create(createData); err != nil {
+	if err := h.repo.Create(RoomModel{Name: createData.Name}); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create room"})
 		return
 	}
