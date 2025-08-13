@@ -1,0 +1,44 @@
+host: localhost:8080
+info:
+  contact: {}
+  description: API para jogar TTRPG
+  title: Epic Dice API
+  version: "1.0"
+paths:
+  /v1/room:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona uma nova sala ao banco de dados
+      parameters:
+      - description: Name of the room
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria uma nova sala
+      tags:
+      - Rooms
+swagger: "2.0"

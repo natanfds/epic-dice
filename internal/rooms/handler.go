@@ -72,6 +72,16 @@ func (h *Handler) WS(c *gin.Context) {
 	}
 }
 
+// @Summary Cria uma nova sala
+// @Description Adiciona uma nova sala ao banco de dados
+// @Tags Rooms
+// @Accept json
+// @Produce json
+// @Param name body string true "Name of the room"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /v1/room [post]
 func (h *Handler) Create(c *gin.Context) {
 	var createData CreateRoomDTO
 	bodyData := c.ShouldBind(&createData)
@@ -86,7 +96,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Room created successfully"})
+	c.JSON(http.StatusCreated, gin.H{"message": "Room created successfully"})
 }
 
 func NewRoomHandler(repo *RoomRepository) *Handler {
