@@ -10,9 +10,17 @@ import (
 func main() {
 	router := gin.Default()
 
+	router.Use(
+		gin.Logger(),
+		gin.Recovery(), // Transforma os panics em 500
+	)
 	router.GET("/ping", ping.Handler)
 
-	router.GET("/room/*room", rooms.Handler)
+	{
+		v1 := router.Group("/v1")
+		v1.GET("/room/*room", rooms.HandlerWS)
+		//v1.POST("/room", rooms.HandlerCreate)
+	}
 
 	err := router.Run(":8080")
 
