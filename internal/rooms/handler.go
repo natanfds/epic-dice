@@ -12,7 +12,11 @@ import (
 	"github.com/natanfds/epic-dice/utils"
 )
 
-func Handler(c *gin.Context) {
+type Handler struct {
+	repo *RoomRepository
+}
+
+func (h *Handler) WS(c *gin.Context) {
 	channelName := c.Params.ByName("room")
 	if channelName == "" {
 		c.Writer.WriteHeader(http.StatusBadRequest)
@@ -65,5 +69,28 @@ func Handler(c *gin.Context) {
 
 		conn.WriteMessage(websocket.TextMessage, processResult)
 
+	}
+}
+
+func (h *Handler) Create(c *gin.Context) {
+	var createData CreateRoomDTO
+	bodyData := c.ShouldBind(&createData)
+	validationErr := utils.Validate.Struct(createData)
+	if bodyData != nil || validationErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	if err := h.repo.Create(createData); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create room"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Room created successfully"})
+}
+
+func NewRoomHandler(repo *RoomRepository) *Handler {
+	return &Handler{
+		repo: repo,
 	}
 }

@@ -3,11 +3,12 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/natanfds/epic-dice/internal/database"
 	"github.com/natanfds/epic-dice/internal/ping"
 	"github.com/natanfds/epic-dice/internal/rooms"
 )
 
-func main() {
+func startAPI(port string) error {
 	router := gin.Default()
 
 	router.Use(
@@ -17,14 +18,26 @@ func main() {
 	router.GET("/ping", ping.Handler)
 
 	{
+		db, err := database.CreateSQLDB(
+			rooms.RoomModel{},
+		)
+		if err != nil {
+			return err
+		}
+
 		v1 := router.Group("/v1")
-		v1.GET("/room/*room", rooms.HandlerWS)
-		//v1.POST("/room", rooms.HandlerCreate)
+
+		roomHandler := rooms.NewRoomHandler(rooms.NewRoomRepository(db))
+		v1.GET("/room/*room", roomHandler.WS)
+		v1.POST("/room", roomHandler.Create)
 	}
 
-	err := router.Run(":8080")
+	err := router.Run(":" + port)
+	return err
+}
 
-	if err != nil {
+func main() {
+	if err := startAPI("8080"); err != nil {
 		panic(err)
 	}
 }
