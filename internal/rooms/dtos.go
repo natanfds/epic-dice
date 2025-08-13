@@ -23,3 +23,10 @@ type CommandDTO struct {
 type CommandResponseDTO struct {
 	MessageResponseDTO
 }
+
+type CreateRoomDTO struct {
+	Name string `json:"name" validate:"required"`
+}
+type UpdateRoomDTO struct {
+	Name string `json:"name" validate:"required"`
+}
