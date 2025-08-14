@@ -2,10 +2,10 @@ package utils
 
 import "golang.org/x/crypto/bcrypt"
 
-type Password struct {
+type password struct {
 }
 
-func (p *Password) Encrypt(password string) (string, error) {
+func (p *password) Encrypt(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -13,9 +13,11 @@ func (p *Password) Encrypt(password string) (string, error) {
 	return string(bytes), nil
 }
 
-func (p *Password) Validate(password string) error {
+func (p *password) Validate(password string) error {
 	return bcrypt.CompareHashAndPassword(
 		[]byte(password),
 		[]byte(password),
 	)
 }
+
+var Password password = password{}

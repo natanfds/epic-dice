@@ -8,6 +8,7 @@ import (
 	"github.com/natanfds/epic-dice/internal/database"
 	"github.com/natanfds/epic-dice/internal/ping"
 	"github.com/natanfds/epic-dice/internal/rooms"
+	"github.com/natanfds/epic-dice/internal/users"
 
 	_ "github.com/natanfds/epic-dice/docs"
 )
@@ -28,6 +29,7 @@ func startAPI(port string) error {
 	{
 		db, err := database.CreateSQLDB(
 			rooms.RoomModel{},
+			users.UserModel{},
 		)
 		if err != nil {
 			return err
@@ -38,6 +40,12 @@ func startAPI(port string) error {
 		roomHandler := rooms.NewRoomHandler(rooms.NewRoomRepository(db))
 		v1.GET("/room/*room", roomHandler.WS)
 		v1.POST("/room", roomHandler.Create)
+
+		userHandler := users.NewUserHandler(users.NewUserRepository(db))
+		v1.POST("/user", userHandler.Create)
+		v1.PATCH("/user", userHandler.Update)
+		v1.DELETE("/user", userHandler.Delete)
+		v1.POST("/login", userHandler.Login)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
